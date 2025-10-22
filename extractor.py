@@ -3,32 +3,37 @@ clr.init(autoreset=True)
 
 import os, shutil, math, hashlib
 
-PADDING = 1
 ACCEPTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 
-### Rename files in directory path
+### Rename files in directory path. mode must be either "numerical" or "md5"
 def rename_files(dirpath, mode="numerical"):
-    global PADDING
     root = os.getcwd()
     os.chdir(dirpath)
-    i = 1
-    for filename in os.listdir():
-        ext = get_extension(filename)
-        filepath = f"{dirpath}/{filename}"
-        if mode == "numerical":
-            os.rename(filepath, f"{dirpath}/image{add_zeros(i, PADDING)}{ext}")
-            i += 1
-        elif mode == "md5":
+    # Rename files numerically
+    if mode == "numerical":
+        # Calculate necessary padding
+        digits = int(math.log10(len(os.listdir()))) + 1
+        for i, filename in enumerate(os.listdir()):
+            ext = get_extension(filename)
+            filepath = f"{dirpath}/{filename}"
+            if mode == "numerical":
+                os.rename(filepath, f"{dirpath}/image{pad(i + 1, digits)}{ext}")
+    # Rename files hashlike
+    elif mode == "md5":
+        for filename in os.listdir():
+            ext = get_extension(filename)
+            filepath = f"{dirpath}/{filename}"
             md5 = get_md5(filepath)
             os.rename(filepath, f"{dirpath}/{md5}{ext}")
-        else:
-            raise ValueError(clr.Fore.RED + "### mode must be either \"numerical\" or \"md5\"")
+    else:
+        raise ValueError(clr.Fore.RED + "### mode must be either \"numerical\" or \"md5\"")
     os.chdir(root)
 
 ### Extract files from src_dir to dest_dir. Only files with accepted extensions are extracted. After extraction files are renamed to
 ### their MD5 hash and their extension is lowercased
 def extract_files(src_dir, dest_dir):
     global ACCEPTED_EXTENSIONS
+    count = 0
     for root, dirnames, filenames in os.walk(src_dir):
         print("### Extracting " + root)
         for filename in filenames:
@@ -46,6 +51,7 @@ def extract_files(src_dir, dest_dir):
                 continue
             shutil.copy(filepath, f"{dest_dir}/{new_filename}")
             print(clr.Fore.GREEN + f"### Copied {filename} as {new_filename}")
+            count += 1
 
 ### Get file's MD5 hash
 def get_md5(filepath):
@@ -61,11 +67,11 @@ def get_extension(filename):
     except ValueError:
         print(clr.Fore.RED + f"### {filename} is missing an extension")
 
-### Convert integer i to string with padding of zeros. Useful for file naming
-def add_zeros(i, n):
-    p = int(math.log10(i))
-    return (n-p-1)*'0' + str(i)
+### Convert integer n to string with padding of zeros. digits specifies the number of digits of the string
+def pad(n, digits):
+    p = int(math.log10(n)) + 1
+    return (digits-p)*'0' + str(n)
 
 root = os.getcwd()
-#extract_files(root + "/src", root + "/dest")
+extract_files(root + "/src", root + "/dest")
 rename_files(root + "/dest", "numerical")
