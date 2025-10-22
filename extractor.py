@@ -73,7 +73,7 @@ def pad(n, digits):
     return (digits-p)*'0' + str(n)
 
 root = os.getcwd()
-src_path = root + "/Image_Dataset"
-dest_path = root + "/photomosaics/source_images"
+src_path = 
+dest_path = 
 extract_files(src_path, dest_path)
 rename_files(dest_path, "numerical")
