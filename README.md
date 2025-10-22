@@ -8,4 +8,4 @@ This is a simple Python program to recursively extract files in a source directo
 Execution should look like this:
 1. Create an empty destination directory.
 2. Extract the files in a source directory to the destination directory.
-3. Repeat 2. as much as you want .
+3. Repeat 2. as much as you want.
