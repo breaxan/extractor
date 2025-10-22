@@ -62,10 +62,10 @@ def get_md5(filepath):
 ### Get file extension
 def get_extension(filename):
     try:
-        ind = filename.index('.')
+        ind = len(filename) - 1 - filename[::-1].index('.')
         return filename[ind:]
     except ValueError:
-        print(clr.Fore.RED + f"### {filename} is missing an extension")
+        raise ValueError(clr.Fore.RED + f"### {filename} is missing an extension")
 
 ### Convert integer n to string with padding of zeros. digits specifies the number of digits of the string
 def pad(n, digits):
@@ -73,5 +73,7 @@ def pad(n, digits):
     return (digits-p)*'0' + str(n)
 
 root = os.getcwd()
-extract_files(root + "/src", root + "/dest")
-rename_files(root + "/dest", "numerical")
+src_path = root + "/Image_Dataset"
+dest_path = root + "/photomosaics/source_images"
+extract_files(src_path, dest_path)
+rename_files(dest_path, "numerical")
