@@ -65,15 +65,17 @@ def get_extension(filename):
         ind = len(filename) - 1 - filename[::-1].index('.')
         return filename[ind:]
     except ValueError:
-        raise ValueError(clr.Fore.RED + f"### {filename} is missing an extension")
+        return ValueError
 
 ### Convert integer n to string with padding of zeros. digits specifies the number of digits of the string
 def pad(n, digits):
     p = int(math.log10(n)) + 1
     return (digits-p)*'0' + str(n)
 
-root = os.getcwd()
-src_path = 
-dest_path = 
-extract_files(src_path, dest_path)
-rename_files(dest_path, "numerical")
+
+if __name__ == "__main__":
+    root = os.getcwd()
+    src_path = 
+    dest_path = 
+    extract_files(src_path, dest_path)
+    rename_files(dest_path, "numerical")
