@@ -34,6 +34,7 @@ def rename_files(dirpath, mode="numerical"):
 def extract_files(src_dir, dest_dir):
     global ACCEPTED_EXTENSIONS
     count = 0
+    rep_count = 0
     for root, dirnames, filenames in os.walk(src_dir):
         print("### Extracting " + root)
         for filename in filenames:
@@ -47,11 +48,13 @@ def extract_files(src_dir, dest_dir):
                 continue
             # Check if filename already exists in dest_dir
             if new_filename in os.listdir(dest_dir):
-                print(clr.Fore.YELLOW + f"### {filename} already in destination as {new_filename}")
+                #print(clr.Fore.YELLOW + f"### {filename} already in destination as {new_filename}")
+                rep_count += 1
                 continue
             shutil.copy(filepath, f"{dest_dir}/{new_filename}")
-            print(clr.Fore.GREEN + f"### Copied {filename} as {new_filename}")
+            #print(clr.Fore.GREEN + f"### Copied {filename} as {new_filename}")
             count += 1
+    print(clr.Fore.GREEN + f"Copied {count} files. Ignored {rep_count} already existing files.")
 
 ### Get file's MD5 hash
 def get_md5(filepath):
