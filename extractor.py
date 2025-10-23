@@ -1,7 +1,7 @@
 import colorama as clr
 clr.init(autoreset=True)
 
-import os, shutil, math, hashlib
+import os, shutil, math, hashlib, sys
 
 ACCEPTED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 
@@ -20,13 +20,14 @@ def rename_files(dirpath, mode="numerical"):
                 os.rename(filepath, f"{dirpath}/image{pad(i + 1, digits)}{ext}")
     # Rename files hashlike
     elif mode == "md5":
+        print("### Renaming files in destination directory to their MD5 hash.")
         for filename in os.listdir():
             ext = get_extension(filename)
             filepath = f"{dirpath}/{filename}"
             md5 = get_md5(filepath)
             os.rename(filepath, f"{dirpath}/{md5}{ext}")
     else:
-        raise ValueError(clr.Fore.RED + "### mode must be either \"numerical\" or \"md5\"")
+        raise ValueError
     os.chdir(root)
 
 ### Extract files from src_dir to dest_dir. Only files with accepted extensions are extracted. After extraction files are renamed to
@@ -54,7 +55,7 @@ def extract_files(src_dir, dest_dir):
             shutil.copy(filepath, f"{dest_dir}/{new_filename}")
             #print(clr.Fore.GREEN + f"### Copied {filename} as {new_filename}")
             count += 1
-    print(clr.Fore.GREEN + f"Copied {count} files. Ignored {rep_count} already existing files.")
+    print(clr.Fore.GREEN + f"Copied {count} files. Ignored {rep_count} duplicates.")
 
 ### Get file's MD5 hash
 def get_md5(filepath):
@@ -75,10 +76,15 @@ def pad(n, digits):
     p = int(math.log10(n)) + 1
     return (digits-p)*'0' + str(n)
 
-
 if __name__ == "__main__":
     root = os.getcwd()
-    src_path = 
-    dest_path = 
+    src_path = root + '/' + sys.argv[1]
+    dest_path = root + '/' + sys.argv[2]
+    # Check if destination directory doesn't exist and create it if it doesn't
+    if not os.path.exists(dest_path):
+        os.makedirs(dest_path)
+    # Check if destination directory is not empty and rename its files hashlike if it isn't
+    if os.listdir(dest_path):
+        rename_files(dest_path, "md5")
     extract_files(src_path, dest_path)
     rename_files(dest_path, "numerical")
